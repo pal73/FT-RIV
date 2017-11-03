@@ -1,4 +1,4 @@
-#include "25lc640.h"
+//#include "25lc640.h"
 #include "control.h"
 #include "mess.h"
 #include "gran.h"
@@ -89,7 +89,7 @@ extern int mess_par0[MESS_DEEP],mess_par1[MESS_DEEP],mess_data[2];
 extern signed short TBAT;
 extern signed short Kunet;
 extern signed short Kubat[2];
-extern unsigned short ad7705_buff[2][16],ad7705_buff_[2];
+
 extern unsigned short Kibat0[2];
 extern signed short Kibat1[2];
 extern signed short Ktbat[2];
@@ -124,7 +124,10 @@ signed short Ibmax;
 unsigned char unh_cnt0,unh_cnt1,b1Hz_unh;
 unsigned char	ch_cnt0,b1Hz_ch,i,iiii;
 unsigned char	ch_cnt1,b1_30Hz_ch;
+unsigned char	ch_cnt2,b1_10Hz_ch;
 unsigned short IZMAX_;
+unsigned short IZMAX_70;
+unsigned short IZMAX_130;
 unsigned short Ubpsmax;
 
 
@@ -235,20 +238,20 @@ else
 
 	spc_stat=spcKE;
 	__ee_spc_stat=spcKE;
-	lc640_write_int(EE_SPC_STAT,__ee_spc_stat);
+	//lc640_write_int(EE_SPC_STAT,__ee_spc_stat);
 	
 	spc_bat=in;
 	__ee_spc_bat=in;
-	lc640_write_int(EE_SPC_BAT,__ee_spc_bat);
+	//lc640_write_int(EE_SPC_BAT,__ee_spc_bat);
 
 	bat[in]._zar_cnt_ke=0;
-	lc640_write_int(ADR_EE_BAT_ZAR_CNT_KE[in],0);
+	//lc640_write_int(ADR_EE_BAT_ZAR_CNT_KE[in],0);
 	
 	spc_phase=0;
 	__ee_spc_phase=0;
-	lc640_write_int(EE_SPC_PHASE,__ee_spc_phase);
+	//lc640_write_int(EE_SPC_PHASE,__ee_spc_phase);
 
-	//ke_mem_hndl(in,lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
+	//ke_mem_hndl(in,//lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
 
 		{					
 		signed short temp_temp;
@@ -268,7 +271,7 @@ else
 		*(((char*)(&(ke_date[0])))+2)=temp;			
 				
 		*(((char*)(&(ke_date[0])))+3)=*((char*)&temp_temp);
-		lc640_write_long(EE_SPC_KE_DATE0,ke_date[0]);
+		//lc640_write_long(EE_SPC_KE_DATE0,ke_date[0]);
 
 		temp=LPC_RTC->HOUR;
 		gran_char(&temp,0,23);
@@ -283,7 +286,7 @@ else
 		*(((char*)(&(ke_date[1])))+2)=temp;
 			
 		*(((char*)(&(ke_date[1])))+3)=*(((char*)&temp_temp)+1);
-		lc640_write_long(EE_SPC_KE_DATE1,ke_date[1]);
+		//lc640_write_long(EE_SPC_KE_DATE1,ke_date[1]);
 		}
 
 	}
@@ -305,7 +308,7 @@ if(spc_stat==spcKE)
 		if(bat[spc_bat]._zar_cnt_ke>=AH_CONSTANT)
 			{
 			bat[spc_bat]._zar_cnt_ke-=AH_CONSTANT;
-			lc640_write_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat],lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat])+1);
+			//lc640_write_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat],//lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat])+1);
 			}
 		}
 
@@ -322,9 +325,9 @@ if(spc_stat==spcKE)
 			
 			if((spc_stat==spcKE)&&(spc_phase==0))
 				{
-				lc640_write_int(ADR_EE_BAT_C_REAL[spc_bat],lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
-				ke_mem_hndl(spc_bat,lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
-				lc640_write_int(ADR_EE_BAT_ZAR_CNT[spc_bat],0);
+				//lc640_write_int(ADR_EE_BAT_C_REAL[spc_bat],//lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
+				//ke_mem_hndl(spc_bat,lc640_read_int(ADR_EE_BAT_ZAR_CNT_KE[spc_bat]));
+				//lc640_write_int(ADR_EE_BAT_ZAR_CNT[spc_bat],0);
 				cntrl_stat=50;
 				cntrl_stat_old=50;
 				}
@@ -333,13 +336,13 @@ if(spc_stat==spcKE)
 				{
 				spc_phase=1;
 				__ee_spc_phase=1;
-				lc640_write_int(EE_SPC_PHASE,1);
+				//lc640_write_int(EE_SPC_PHASE,1);
 				}			
 			else
 				{
 				spc_stat=spcOFF;
 				__ee_spc_stat=spcOFF;
-				lc640_write_int(EE_SPC_STAT,spcOFF);
+				//lc640_write_int(EE_SPC_STAT,spcOFF);
 				}
 			}
 		}
@@ -349,7 +352,7 @@ if(spc_stat==spcKE)
 		{
 		spc_stat=spcOFF;
 		__ee_spc_stat=spcOFF;
-		lc640_write_int(EE_SPC_STAT,spcOFF);
+		//lc640_write_int(EE_SPC_STAT,spcOFF);
 		}
 	}
 			
@@ -364,11 +367,11 @@ if(spc_stat==spcOFF)
 	{
 	spc_stat=spcVZ;
 	__ee_spc_stat=spcVZ; 
-	lc640_write_int(EE_SPC_STAT,__ee_spc_stat);   
+	//lc640_write_int(EE_SPC_STAT,__ee_spc_stat);   
 	vz_cnt_h=hour;
 	__ee_vz_cnt=hour*60;
-	lc640_write_int(EE_VZ_CNT,__ee_vz_cnt);
-	lc640_write_int(EE_SPC_VZ_LENGT,hour*60);	
+	//lc640_write_int(EE_VZ_CNT,__ee_vz_cnt);
+	//lc640_write_int(EE_SPC_VZ_LENGT,hour*60);	
 	vz_cnt_h_=0;
 	vz_cnt_s=0;
 	out=1;
@@ -392,7 +395,7 @@ vz_cnt_h_=0;
 spc_stat=spcOFF;
 
 		__ee_spc_stat=spcOFF;
-		lc640_write_int(EE_SPC_STAT,spcOFF);
+		//lc640_write_int(EE_SPC_STAT,spcOFF);
      }
 
 }
@@ -400,24 +403,24 @@ spc_stat=spcOFF;
 //-----------------------------------------------
 void avz_next_date_hndl(void)
 {
-if((LPC_RTC->MONTH+AVZ)>12)lc640_write_int(EE_YEAR_AVZ,LPC_RTC->YEAR+1);
-else lc640_write_int(EE_YEAR_AVZ,LPC_RTC->YEAR);
+//if((LPC_RTC->MONTH+AVZ)>12)lc640_write_int(EE_YEAR_AVZ,LPC_RTC->YEAR+1);
+//else lc640_write_int(EE_YEAR_AVZ,LPC_RTC->YEAR);
 
-//lc640_write_int(EE_YEAR_AVZ,6);
+////lc640_write_int(EE_YEAR_AVZ,6);
 
-if((LPC_RTC->MONTH+AVZ)>12)lc640_write_int(EE_MONTH_AVZ,(LPC_RTC->MONTH+AVZ)-12);
-else lc640_write_int(EE_MONTH_AVZ,LPC_RTC->MONTH+AVZ);                                                 
+//if((LPC_RTC->MONTH+AVZ)>12)lc640_write_int(EE_MONTH_AVZ,(LPC_RTC->MONTH+AVZ)-12);
+//else lc640_write_int(EE_MONTH_AVZ,LPC_RTC->MONTH+AVZ);                                                 
 
-//lc640_write_int(EE_MONTH_AVZ,5);
+////lc640_write_int(EE_MONTH_AVZ,5);
 
-if(LPC_RTC->DOM>28) lc640_write_int(EE_DATE_AVZ,28);
-else lc640_write_int(EE_DATE_AVZ,LPC_RTC->DOM);
+//if(LPC_RTC->DOM>28) lc640_write_int(EE_DATE_AVZ,28);
+//else lc640_write_int(EE_DATE_AVZ,LPC_RTC->DOM);
 
-//lc640_write_int(EE_DATE_AVZ,4);
+////lc640_write_int(EE_DATE_AVZ,4);
 
-lc640_write_int(EE_HOUR_AVZ,LPC_RTC->HOUR);
-lc640_write_int(EE_MIN_AVZ,LPC_RTC->MIN);
-lc640_write_int(EE_SEC_AVZ,LPC_RTC->SEC);
+//lc640_write_int(EE_HOUR_AVZ,LPC_RTC->HOUR);
+//lc640_write_int(EE_MIN_AVZ,LPC_RTC->MIN);
+//lc640_write_int(EE_SEC_AVZ,LPC_RTC->SEC);
 
 }
 
@@ -470,12 +473,12 @@ if(spc_stat==spcVZ)
 			vz_cnt_s=0;
 			
 			__ee_vz_cnt--;
-			lc640_write_int(EE_VZ_CNT,__ee_vz_cnt);
+			//lc640_write_int(EE_VZ_CNT,__ee_vz_cnt);
 			if(!__ee_vz_cnt)
 				{
 				spc_stat=spcOFF;
 						__ee_spc_stat=spcOFF;
-		lc640_write_int(EE_SPC_STAT,spcOFF);
+		//lc640_write_int(EE_SPC_STAT,spcOFF);
 				vz_mem_hndl(0);
 				}
 			}
@@ -713,8 +716,8 @@ if(samokalibr_cnt>=1785U)
 
 if(samokalibr_cnt==1799U)
 	{
-	if((Kibat0[0]!=ad7705_buff_[0])&&(abs(bat[0]._Ib/10)<IZMAX)) lc640_write_int(ADR_KI0BAT[0],ad7705_buff_[0]);
-	if((Kibat0[1]!=ad7705_buff_[1])&&(abs(bat[0]._Ib/10)<IZMAX)) lc640_write_int(ADR_KI0BAT[1],ad7705_buff_[1]);
+	//if((Kibat0[0]!=ad7705_buff_[0])&&(abs(bat[0]._Ib/10)<IZMAX)) lc640_write_int(ADR_KI0BAT[0],ad7705_buff_[0]);
+	//if((Kibat0[1]!=ad7705_buff_[1])&&(abs(bat[0]._Ib/10)<IZMAX)) lc640_write_int(ADR_KI0BAT[1],ad7705_buff_[1]);
 	
 	}	 	
 }
@@ -1147,36 +1150,13 @@ if(!mess_find_unvol(MESS2MATEMAT))
 
 
 //Токи батарей
-if(!mess_find_unvol(MESS2MATEMAT))
-	{
-	temp_SL=(signed long)ad7705_buff_[0];
-	temp_SL-=(signed long)Kibat0[0];
-	temp_SL*=(signed long)Kibat1[0];
-	if((AUSW_MAIN==24120)||(AUSW_MAIN==24210))temp_SL/=300L;
-	else if((AUSW_MAIN==22010)||(AUSW_MAIN==22035)||(AUSW_MAIN==22033))temp_SL/=2000L;
-	else temp_SL/=1000L;
-	#ifdef UKU_TELECORE2015
-	temp_SL/=2L;
-	temp_SL=-temp_SL;
-	#endif
-	bat[0]._Ib=(signed short)temp_SL;
 
-	temp_SL=(signed long)ad7705_buff_[1];
-	temp_SL-=(signed long)Kibat0[1];
-	temp_SL*=(signed long)Kibat1[1];
-	if((AUSW_MAIN==24120)||(AUSW_MAIN==24210))temp_SL/=300L;
-	else if((AUSW_MAIN==22010)||(AUSW_MAIN==22035)||(AUSW_MAIN==22033))temp_SL/=2000L;
-	else temp_SL/=1000L;
-	bat[1]._Ib=(signed short)temp_SL;
-	}
 
 
 
 
 
 //Температуры батарей
-
-#ifdef UKU_KONTUR
 if((adc_buff_[6]>800)&&(adc_buff_[6]<3800))bat[0]._nd=0;
 else bat[0]._nd=1;
 temp_SL=(signed long)adc_buff_[6];
@@ -1184,17 +1164,7 @@ temp_SL*=Ktbat[0];
 temp_SL/=20000L;
 temp_SL-=273L;
 bat[0]._Tb=(signed short)temp_SL;
-#else
-if((adc_buff_[6]>800)&&(adc_buff_[6]<3800))bat[0]._nd=0;
-else bat[0]._nd=1;
-temp_SL=(signed long)adc_buff_[6];
-temp_SL*=Ktbat[0];
-temp_SL/=20000L;
-temp_SL-=273L;
-bat[0]._Tb=(signed short)temp_SL;
-#endif
 
-#ifdef UKU_KONTUR
 if((adc_buff_[7]>800)&&(adc_buff_[7]<3800))bat[1]._nd=0;
 else bat[1]._nd=1;
 temp_SL=(signed long)adc_buff_[7];
@@ -1202,15 +1172,6 @@ temp_SL*=Ktbat[1];
 temp_SL/=20000L;
 temp_SL-=273L;
 bat[1]._Tb=(signed short)temp_SL;
-#else
-if((adc_buff_[7]>800)&&(adc_buff_[7]<3800))bat[1]._nd=0;
-else bat[1]._nd=1;
-temp_SL=(signed long)adc_buff_[7];
-temp_SL*=Ktbat[1];
-temp_SL/=20000L;
-temp_SL-=273L;
-bat[1]._Tb=(signed short)temp_SL;
-#endif
 
 #ifdef UKU_6U
 
@@ -1723,21 +1684,16 @@ else
 //*********************************************
 
 #ifndef TELECORE
-if((BAT_IS_ON[0]==bisON)&&(bat[0]._Ub>200)) Ibmax=bat[0]._Ib;
+if((BAT_IS_ON[0]==bisON)&&(bat[0]._Ub>200)) 
 if((BAT_IS_ON[1]==bisON)&&(bat[1]._Ub>200)&&(bat[1]._Ib>bat[0]._Ib)) Ibmax=bat[1]._Ib;
 #endif
 
-#ifdef TELECORE
+#ifdef UKU_IP55
 Ibmax=0;
-if((NUMBAT_TELECORE>0)/*&&(lakb[0]._communicationFullErrorStat==0)*/&&(lakb[0]._ch_curr/10>Ibmax))Ibmax=lakb[0]._ch_curr/10;
-if((NUMBAT_TELECORE>1)&&(lakb[1]._communicationFullErrorStat==0)&&(lakb[1]._ch_curr/10>Ibmax))Ibmax=lakb[1]._ch_curr/10;
-if((NUMBAT_TELECORE>2)&&(lakb[2]._communicationFullErrorStat==0)&&(lakb[2]._ch_curr/10>Ibmax))Ibmax=lakb[2]._ch_curr/10;
+if(NUMBAT_IP55>0)    						Ibmax=bat[0]._Ib/10;
+if((NUMBAT_IP55>1)&&(bat[1]._Ib/10>Ibmax)) 	Ibmax=bat[1]._Ib/10;
 #endif
 
-//if((AUSW_MAIN==22063)||(AUSW_MAIN==22023)||(AUSW_MAIN==22043))Ibmax=Ib_ips_termokompensat;
-#ifdef UKU_220_IPS_TERMOKOMPENSAT
-Ibmax=Ib_ips_termokompensat;
-#endif
 for(i=0;i<NUMIST+2;i++)
 	{
 	if(bps[i]._cnt<25)
@@ -1765,7 +1721,7 @@ for(i=0;i<NUMIST+2;i++)
 
 #ifdef TELECORE
 load_I=0;
-for(i=0;i<NUMBAT_TELECORE;i++)
+for(i=0;i<NUMBAT_IP55;i++)
 	{
 	load_I-=lakb[i]._ch_curr/10;
 	}
@@ -1985,7 +1941,7 @@ if((BAT_IS_ON[0]==bisON)&&(BAT_TYPE==1))
 		//short numOfCells, numOfTemperCells, baseOfData;
 		
 		#ifndef UKU_TELECORE2016
-		numOfCells=((ascii2halFhex(liBatteryInBuff[17]))<<4)+((ascii2halFhex(liBatteryInBuff[18])));
+/*		numOfCells=((ascii2halFhex(liBatteryInBuff[17]))<<4)+((ascii2halFhex(liBatteryInBuff[18])));
 		numOfTemperCells=((ascii2halFhex(liBatteryInBuff[17+(numOfCells*4)+2]))<<4)+((ascii2halFhex(liBatteryInBuff[18+(numOfCells*4)+2])));
 		numOfPacks=((ascii2halFhex(liBatteryInBuff[15]))<<4)+((ascii2halFhex(liBatteryInBuff[16])));
 		if(numOfPacks)numOfPacks-=1;
@@ -2030,7 +1986,7 @@ if((BAT_IS_ON[0]==bisON)&&(BAT_TYPE==1))
 							((ascii2halFhex(liBatteryInBuff[2+baseOfData+14]))<<8)+
 							((ascii2halFhex(liBatteryInBuff[3+baseOfData+14]))<<4)+
 							((ascii2halFhex(liBatteryInBuff[4+baseOfData+14])))
-							)/10;
+							)/10; */
 		#endif								  
 		}
 /*	
@@ -3903,87 +3859,7 @@ else powerCurrentCnt=0;
 power_current_tempo_old=power_current_tempo;
 }
 
-//-----------------------------------------------
-void inv_drv(char in)
-{
-char temp,temp_;
-//if (bps[in]._device!=dINV) return;
-plazma_inv[4];
 
-gran_char(&first_inv_slot,1,7);
-
-
-temp=inv[in]._flags_tm_old^inv[in]._flags_tm;
-if(temp)plazma_inv[1] =temp;
-
-temp_=inv[in]._flags_tm&temp;
-if(temp_)plazma_inv[2] =temp_;
-
-if( (temp&(1<<0)) && (temp_&(1<<0)) ) 
-	{
-	plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, overload",14,1,1);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, overload",14,2,1);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, overload",14,3,1);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, overload",14,4,1);
-	}
-else if( (temp&(1<<1)) && (temp_&(1<<1)) )
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, overheat",14,1,2);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, overheat",14,2,2);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, overheat",14,3,2);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, overheat",14,4,2);
-	}
-
-else if( (temp&(1<<2)) && (temp_&(1<<2)) )
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, is warm",14,1,3);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, is warm",14,2,3);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, is warm",14,3,3);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, is warm",14,4,3);
-	}
-
-else if( (temp&(1<<3)) && (temp_&(1<<3)) ) 
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, voltage is up",14,1,4);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, voltage is up",14,2,4);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, voltage is up",14,3,4);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, voltage is up",14,4,4);
-	}
-
-else if( (temp&(1<<4)) && (temp_&(1<<4)) ) 
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, voltage is down",14,1,5);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, voltage is down",14,2,5);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, voltage is down",14,3,5);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, voltage is down",14,4,5);
-	}
-
-else if( (temp&(1<<5)) && (temp_&(1<<5)) )
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 Alarm, output is offed",14,1,6);
-	else if(in==1)snmp_trap_send("Invertor #2 Alarm, output is offed",14,2,6);
-	else if(in==2)snmp_trap_send("Invertor #3 Alarm, output is offed",14,3,6);
-	else if(in==3)snmp_trap_send("Invertor #4 Alarm, output is offed",14,4,6);
-	}
-
-else if((temp)&&(!temp_)) 
-	{
-		plazma_inv[3]++;
-	if(in==0)snmp_trap_send("Invertor #1 is norm",14,1,0);
-	else if(in==1)snmp_trap_send("Invertor #2 is norm",14,2,0);
-	else if(in==2)snmp_trap_send("Invertor #3 is norm",14,3,0);
-	else if(in==3)snmp_trap_send("Invertor #4 is norm",14,4,0);
-	}
-
-inv[in]._flags_tm_old=inv[in]._flags_tm;
-
-}	
 
 //-----------------------------------------------
 void ipsBlckHndl(char in)
@@ -4165,70 +4041,7 @@ bps[in]._vol_u=cntrl_stat+bps[in]._x_;
 bps[in]._vol_i=1000; 
 }
 
-//-----------------------------------------------
-void avt_hndl(void)
-{
-char i;
-for(i=0;i<12;i++)
-	{
-	if(eb2_data_short[6]&(1<<i))
-		{
-		avt_stat[i]=avtON;
-		}
-	else avt_stat[i]=avtOFF;
-	}
 
-if((avt_stat_old[0]!=avt_stat[0])&&(NUMAVT>=1))
-	{
-	if(avt_stat[0]==avtON) 	snmp_trap_send("Avtomat #1 is ON ",11,1,1);
-	else 				snmp_trap_send("Avtomat #1 is OFF",11,1,0);
-	}
-if((avt_stat_old[1]!=avt_stat[1])&&(NUMAVT>=2))
-	{
-	if(avt_stat[1]==avtON) 	snmp_trap_send("Avtomat #2 is ON ",11,2,1);
-	else 				snmp_trap_send("Avtomat #2 is OFF",11,2,0);
-	}
-if((avt_stat_old[2]!=avt_stat[2])&&(NUMAVT>=3))
-	{
-	if(avt_stat[2]==avtON) 	snmp_trap_send("Avtomat #3 is ON ",11,3,1);
-	else 				snmp_trap_send("Avtomat #3 is OFF",11,3,0);
-	}
-if((avt_stat_old[3]!=avt_stat[3])&&(NUMAVT>=4))
-	{
-	if(avt_stat[3]==avtON) 	snmp_trap_send("Avtomat #4 is ON ",11,4,1);
-	else 				snmp_trap_send("Avtomat #4 is OFF",11,4,0);
-	}
-if((avt_stat_old[4]!=avt_stat[4])&&(NUMAVT>=5))
-	{
-	if(avt_stat[4]==avtON) 	snmp_trap_send("Avtomat #5 is ON ",11,5,1);
-	else 				snmp_trap_send("Avtomat #5 is OFF",11,5,0);
-	}
-if((avt_stat_old[5]!=avt_stat[5])&&(NUMAVT>=6))
-	{
-	if(avt_stat[5]==avtON) 	snmp_trap_send("Avtomat #6 is ON ",11,6,1);
-	else 				snmp_trap_send("Avtomat #6 is OFF",11,6,0);
-	}
-if((avt_stat_old[6]!=avt_stat[6])&&(NUMAVT>=7))
-	{
-	if(avt_stat[6]==avtON) 	snmp_trap_send("Avtomat #7 is ON ",11,7,1);
-	else 				snmp_trap_send("Avtomat #7 is OFF",11,7,0);
-	}
-if((avt_stat_old[7]!=avt_stat[7])&&(NUMAVT>=8))
-	{
-	if(avt_stat[7]==avtON) 	snmp_trap_send("Avtomat #8 is ON ",11,8,1);
-	else 				snmp_trap_send("Avtomat #8 is OFF",11,8,0);
-	}
-if((avt_stat_old[8]!=avt_stat[8])&&(NUMAVT>=9))
-	{
-	if(avt_stat[8]==avtON) 	snmp_trap_send("Avtomat #9 is ON ",11,9,1);
-	else 				snmp_trap_send("Avtomat #9 is OFF",11,9,0);
-	}
-
-for(i=0;i<12;i++)
-	{
-	avt_stat_old[i]=avt_stat[i];
-	}
-}
 
 //-----------------------------------------------
 void bat_hndl(void)
@@ -4336,6 +4149,7 @@ else
 //-----------------------------------------------
 void lakb_hndl(void)
 {
+/*
 char i;
 char temp;
 
@@ -4389,7 +4203,7 @@ for(i=0;i<3;i++)
 		lakb[i]._s_o_c=0;
 		lakb[i]._s_o_h=0;
 		}
-	}
+	}*/
 }
 
 //-----------------------------------------------
@@ -4424,9 +4238,9 @@ else if(TELECORE2015_KLIMAT_VENT_SIGNAL==1)
 TELECORE2015_KLIMAT_WARM_ON_temp=TELECORE2015_KLIMAT_WARM_ON;
 if(
 	(lakb_stat_comm_error)		//хотя бы у одной из литиевых батарей есть проблемы со связью 
-	|| ((NUMBAT_TELECORE>0)&&(lakb[0]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 1 батарея и ее заряд снизился ниже установленного порога
-	|| ((NUMBAT_TELECORE>1)&&(lakb[1]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 2-я батарея .....
-	|| ((NUMBAT_TELECORE>2)&&(lakb[2]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 3-я батарея	.....
+	|| ((NUMBAT_IP55>0)&&(lakb[0]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 1 батарея и ее заряд снизился ниже установленного порога
+	|| ((NUMBAT_IP55>1)&&(lakb[1]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 2-я батарея .....
+	|| ((NUMBAT_IP55>2)&&(lakb[2]._zar_percent<TELECORE2015_KLIMAT_CAP)) //есть 3-я батарея	.....
   )	TELECORE2015_KLIMAT_WARM_ON_temp=10;
 
 if(t_box_warm<TELECORE2015_KLIMAT_WARM_ON_temp) t_box_warm_on_cnt++;
@@ -4975,17 +4789,17 @@ if(bat[in]._time_cnt==0)
 		if(BAT_C_REAL[in]==0x5555) tempUS_=BAT_C_NOM[in];
 		else tempUS_=BAT_C_REAL[in];
 		
-		b_zar=lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
+		//b_zar=lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
 
 		if(b_zar<(tempUS_/**10*/))
 			{
 			bat[in]._zar_cnt-=AH_CONSTANT;
 
-			lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],b_zar+1);
+			//lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],b_zar+1);
 			}
 		else if(b_zar>(tempUS_/**10*/))  
 			{
-			lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],tempUS_);
+			//lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],tempUS_);
 			bat[in]._zar_cnt=AH_CONSTANT;
 
 			}
@@ -4997,18 +4811,18 @@ if(bat[in]._time_cnt==0)
 		if(BAT_C_REAL[in]==0x5555) tempUS_=BAT_C_NOM[in];
 		else tempUS_=BAT_C_REAL[in];
 		
-		b_zar=lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
+		//b_zar=lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
 
 		if(b_zar>tempUS_)
 			{
-			lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],tempUS_);
+			//lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],tempUS_);
 			b_zar=tempUS_;
 			}
 		if(b_zar)
 			{
 			bat[in]._zar_cnt+=AH_CONSTANT;
 
-			lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],b_zar-1);
+			//lc640_write_int(ADR_EE_BAT_ZAR_CNT[in],b_zar-1);
 			}
 		else 
 			{
@@ -5018,7 +4832,7 @@ if(bat[in]._time_cnt==0)
 		}
 
 			
-	tempUL=(unsigned long)lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
+	//tempUL=(unsigned long)lc640_read_int(ADR_EE_BAT_ZAR_CNT[in]);
 	
 	if(BAT_C_REAL[in]==0x5555) tempUL_=(unsigned long)BAT_C_NOM[in];
 	else tempUL_=(unsigned long)BAT_C_REAL[in];
@@ -5097,7 +4911,7 @@ if(bat[in]._resurs_cnt<36000)
 	if(bat[in]._resurs_cnt>=36000)
 		{
 		bat[in]._resurs_cnt=0;
-		lc640_write_int(ADR_EE_BAT_RESURS[in],lc640_read_int(ADR_EE_BAT_RESURS[in])+1);
+		//lc640_write_int(ADR_EE_BAT_RESURS[in],//lc640_read_int(ADR_EE_BAT_RESURS[in])+1);
 		}
 	}
 else bat[in]._resurs_cnt=0;
@@ -5231,13 +5045,13 @@ else if(b1Hz_unh)
 		else 
 			{
 			signed short i;
-			for(i=(NUMBAT_TELECORE-1);i>=0;i--)
+			for(i=(NUMBAT_IP55-1);i>=0;i--)
 				{
 				/*if(lakb[i]._communicationFullErrorStat==0)*/u_necc=lakb[i]._tot_bat_volt+DU_LI_BAT;
 				}
 			}
 
-		if(NUMBAT_TELECORE==0)	u_necc=UB0;
+		if(NUMBAT_IP55==0)	u_necc=UB0;
 
 		gran(&u_necc,0,UB0);
 		gran(&u_necc,0,UB20);
@@ -5303,6 +5117,220 @@ gran(&num_necc,1,NUMIST);
 
 }
 
+//-----------------------------------------------
+void cntrl_hndl_ip55(void)
+{
+
+gran(&LI_T4,1,10);
+
+
+
+if(ch_cnt0<10)
+	{
+	ch_cnt0++;
+	if(ch_cnt0>=10)
+		{
+		ch_cnt0=0;
+		b1Hz_ch=1;
+
+		if(ch_cnt1<LI_T4)
+			{
+			ch_cnt1++;
+			if(ch_cnt1>=LI_T4)
+				{
+				ch_cnt1=0;
+				b1_30Hz_ch=1;
+				}
+			}
+		else ch_cnt1=0;
+
+		if(ch_cnt2<10)
+			{
+			ch_cnt2++;
+			if(ch_cnt2>=10)
+				{
+				ch_cnt2=0;
+				b1_10Hz_ch=1;
+				}
+			}
+		else ch_cnt2=0;
+		}
+	}
+else ch_cnt0=0;
+
+if(mess_find_unvol(MESS2CNTRL_HNDL))
+	{
+	if(mess_data[0]==PARAM_CNTRL_STAT_PLUS)
+		{
+		cntrl_stat=cntrl_stat_old+mess_data[1];
+		}
+	else if(mess_data[0]==PARAM_CNTRL_STAT_MINUS)
+		{
+		cntrl_stat=cntrl_stat_old-mess_data[1];
+		}
+	else if(mess_data[0]==PARAM_CNTRL_STAT_STEP_DOWN)
+		{
+		cntrl_stat--;
+
+		if((cntrl_stat<=30)||(load_U<USIGN)) mess_send(MESS2KB_HNDL,PARAM_CNTRL_IS_DOWN,0,10);
+
+		}
+	else if(mess_data[0]==PARAM_CNTRL_STAT_SET)
+		{
+		cntrl_stat=mess_data[1];
+		}
+
+	else if(mess_data[0]==PARAM_CNTRL_STAT_FAST_REG)
+		{
+		if(load_U>u_necc)
+			{
+			if(((load_U-u_necc)>10)&&(cntrl_stat>0))cntrl_stat-=5;
+			else if((cntrl_stat)&&b1Hz_ch)cntrl_stat--;
+			}
+		else if(load_U<u_necc)
+			{	
+			if(((u_necc-load_U)>10)&&(cntrl_stat<1015))cntrl_stat+=5;
+			else	if((cntrl_stat<1020)&&b1Hz_ch)cntrl_stat++;
+			}
+		}
+
+	}
+
+IZMAX_=LI_IZMAX1;
+
+for(i=0;i<NUMBAT_IP55;i++)
+	{
+	if(lakb[i]._s_o_c_percent>=LI_Q)
+		{
+		IZMAX_=LI_IZMAX2;
+		break;
+		}
+	}
+
+IZMAX_130=IZMAX_+IZMAX_/10+IZMAX_/5;
+
+IZMAX_70=IZMAX_-IZMAX_/10-IZMAX_/5;
+
+if(b1Hz_ch)
+	{
+	cntrl_stat_new=cntrl_stat_old;
+
+
+	LI_UNECC_=LI_UNECC;
+
+	if(lakb[0]._voltage_event_code||lakb[1]._voltage_event_code/*||lakb[0]._balanced_event_code||lakb[1]._balanced_event_code*/)
+		{
+		if(LI_AVAR_CNT<209)LI_AVAR_CNT++;
+		}
+	else 
+		{
+		if(b1_10Hz_ch)
+			{
+			if(LI_AVAR_CNT)LI_AVAR_CNT--;
+			}
+		}
+	if(LI_AVAR_CNT) LI_UNECC_=LI_UNECC-LI_AVAR_CNT/10;
+
+
+	
+	plazma_cntrl_stat=50;
+
+	if(Ibmax>=IZMAX_130)
+		{
+		cntrl_stat_new-=10;
+		plazma_cntrl_stat=51;
+		}
+	else if(Ubpsmax<(load_U-20))
+		{
+		cntrl_stat_new+=LI_K1;
+		plazma_cntrl_stat=58;
+		}
+	else if((Ubpsmax>=(load_U-20))&&(Ibmax==0))
+		{
+		if(load_U>LI_UNECC_)
+			{
+			cntrl_stat_new-=LI_K2;
+			plazma_cntrl_stat=57;
+			}
+		else if(load_U<LI_UNECC_)
+			{
+			cntrl_stat_new+=LI_K2;
+			plazma_cntrl_stat=58;
+			}
+		}
+	else if	(Ibmax>=IZMAX_)
+		{
+		plazma_cntrl_stat=60;
+		if(b1_30Hz_ch)
+			{
+		//	if(load_U>TELECORE2017_ULINECC_)
+		//		{
+				cntrl_stat_new--;
+				plazma_cntrl_stat=52;
+		//		}
+		//	else if(load_U<TELECORE2017_ULINECC_)
+		//		{
+		//		cntrl_stat_new++;
+		//		plazma_cntrl_stat=53;
+		//		}
+			}
+		}
+	else if	(Ibmax>=IZMAX_70)
+		{
+		plazma_cntrl_stat=61;
+		if(b1_30Hz_ch)
+			{
+			if(load_U>LI_UNECC_)
+				{
+				cntrl_stat_new--;
+				plazma_cntrl_stat=54;
+				}
+			else if(load_U<LI_UNECC_)
+				{
+				cntrl_stat_new++;
+				plazma_cntrl_stat=55;
+				}
+			}
+		}
+	else if((Ibmax)&&(Ibmax<IZMAX_70))
+		{
+		//cntrl_stat_new+=TELECORE2017_K3;
+		if(load_U>LI_UNECC_)
+			{
+			cntrl_stat_new-=LI_K3;
+			plazma_cntrl_stat=71;
+			}
+		else if(load_U<LI_UNECC_)
+			{
+			cntrl_stat_new+=LI_K3;
+			plazma_cntrl_stat=72;
+			}
+		}
+		
+	gran(&cntrl_stat_new,10,1010);			
+	cntrl_stat_old=cntrl_stat_new;
+	cntrl_stat=cntrl_stat_new;
+	}
+
+
+iiii=0;
+for(i=0;i<NUMIST;i++)
+     {
+     if(bps[i]._cnt<30)iiii=1;
+     }
+
+if(iiii==0)
+     {
+     cntrl_stat=0;	
+     cntrl_stat_old=0;
+     cntrl_stat_new=0;
+	 plazma_cntrl_stat=20;
+     }
+gran(&cntrl_stat,10,1010); 
+b1Hz_ch=0;
+b1_30Hz_ch=0;
+b1_10Hz_ch=0;
+}
 
 #ifndef TELECORE
 //-----------------------------------------------
@@ -5673,7 +5701,7 @@ else if((b1Hz_ch)&&(!bIBAT_SMKLBR))
 	{
 	cntrl_stat_new=cntrl_stat_old;
 	plazma_cntrl_stat=11;
-	if((NUMBAT_TELECORE==0)||(lakbNotErrorNum==0))
+	if((NUMBAT_IP55==0)||(lakbNotErrorNum==0))
 		{
 		plazma_cntrl_stat=33;
 		if(load_U<u_necc)
@@ -5919,47 +5947,9 @@ for(i=0;i<NUMSK;i++)
 			}
 		}
 
-#ifndef UKU_KONTUR
-	if(sk_av_stat_old[i]!=sk_av_stat[i])
-		{
-		plazma_sk++;
-		if(sk_av_stat[i]==sasON)
-			{
-			if(i==0)snmp_trap_send("SK #1 Alarm",15,1,1);
-			else if(i==1)snmp_trap_send("SK #2 Alarm",15,2,1);
-			else if(i==2)snmp_trap_send("SK #3 Alarm",15,3,1);
-			else if(i==3)snmp_trap_send("SK #4 Alarm",15,4,1);
-			}
-		else 
-			{
-			if(i==0)snmp_trap_send("SK #1 Alarm is off",15,1,0);
-			else if(i==1)snmp_trap_send("SK #2 Alarm is off",15,2,0);
-			else if(i==2)snmp_trap_send("SK #3 Alarm is off",15,3,0);
-			else if(i==3)snmp_trap_send("SK #4 Alarm is off",15,4,0);
-			}
-	 	}
-#endif
 
-#ifdef UKU_KONTUR
-	if(sk_av_stat_old[i]!=sk_av_stat[i])
-		{
-		plazma_sk++;
-		if(sk_av_stat[i]==sasON)
-			{
-			if(i==0)snmp_trap_send("Door is opened",15,1,1);
-			else if(i==1)snmp_trap_send("Smoke Alarm",15,2,1);
-			else if(i==2)snmp_trap_send("Shock Sensor Alarm",15,3,1);
-			else if(i==3)snmp_trap_send("SK #4 Alarm",15,4,1);
-			}
-		else 
-			{
-			if(i==0)snmp_trap_send("Door is closed",15,1,0);
-			else if(i==1)snmp_trap_send("Smoke Alarm is off",15,2,0);
-			else if(i==2)snmp_trap_send("Shock Sensor Alarm is off",15,3,0);
-			else if(i==3)snmp_trap_send("SK #4 Alarm is off",15,4,0);
-			}
-	 	}
-#endif
+
+
 	sk_av_stat_old[i]=sk_av_stat[i];
 	}
 }
@@ -5975,9 +5965,9 @@ if(((bat[0]._Ib>(2*IKB)) || (bat[0]._Ib<(-IKB*2))) &&(main_kb_cnt<((TBAT*60)-30)
 																 
 if((main_kb_cnt==((TBAT*60)-10)) &&(spc_stat==spcOFF))
 	{
-	if((sign_U[0]==1) && (sign_I[0]==1) && (lc640_read_int(EE_BAT1_ZAR_CNT)!=BAT_C_REAL[0]) && (NUMBAT) && (!(bat[0]._av&1)))
+	//if((sign_U[0]==1) && (sign_I[0]==1) && (lc640_read_int(EE_BAT1_ZAR_CNT)!=BAT_C_REAL[0]) && (NUMBAT) && (!(bat[0]._av&1)))
 		{
-		lc640_write_int(EE_BAT1_ZAR_CNT,BAT_C_REAL[0]);
+		//lc640_write_int(EE_BAT1_ZAR_CNT,BAT_C_REAL[0]);
 		superviser_cnt++;
 		}
 	
@@ -5989,9 +5979,9 @@ if(((bat[1]._Ib>(2*IKB)) || (bat[1]._Ib<(-IKB*2))) &&(main_kb_cnt<((TBAT*60)-30)
 																 
 if((main_kb_cnt==((TBAT*60)-10)) &&(spc_stat==spcOFF))
 	{
-	if((sign_U[1]==1) && (sign_I[1]==1) && (lc640_read_int(EE_BAT2_ZAR_CNT)!=BAT_C_REAL[1]) && (NUMBAT==2) && (!(bat[1]._av&1)))
+	//if((sign_U[1]==1) && (sign_I[1]==1) && (lc640_read_int(EE_BAT2_ZAR_CNT)!=BAT_C_REAL[1]) && (NUMBAT==2) && (!(bat[1]._av&1)))
 		{
-		lc640_write_int(EE_BAT2_ZAR_CNT,BAT_C_REAL[1]);
+		//lc640_write_int(EE_BAT2_ZAR_CNT,BAT_C_REAL[1]);
 		superviser_cnt++;
 		}
 	
@@ -6212,13 +6202,13 @@ numOfForvardBps_minCnt++;
 if(numOfForvardBps_minCnt>=60)
 	{
 	numOfForvardBps_minCnt=0;
-	numOfForvardBps_hourCnt=lc640_read_int(EE_FORVBPSHOURCNT);
+	numOfForvardBps_hourCnt=//lc640_read_int(EE_FORVBPSHOURCNT);
 	numOfForvardBps_hourCnt++;
 	if(numOfForvardBps_hourCnt>=(FORVARDBPSCHHOUR*NUMIST))
 		{
 		numOfForvardBps_hourCnt=0;
 		}
-	lc640_write_int(EE_FORVBPSHOURCNT,numOfForvardBps_hourCnt);
+	//lc640_write_int(EE_FORVBPSHOURCNT,numOfForvardBps_hourCnt);
 	}
 
 numOfForvardBps=numOfForvardBps_hourCnt/FORVARDBPSCHHOUR; 
@@ -6227,7 +6217,7 @@ numOfForvardBps=numOfForvardBps_hourCnt/FORVARDBPSCHHOUR;
 //-----------------------------------------------
 void	numOfForvardBps_init(void)			//Программа сброса системы смены первого источника для равномерного износа БПСов
 {									//Должна вызываться при изменении кол-ва источников в структуре
-lc640_write_int(EE_FORVBPSHOURCNT,0);
+//lc640_write_int(EE_FORVBPSHOURCNT,0);
 numOfForvardBps_minCnt=0;
 }
 

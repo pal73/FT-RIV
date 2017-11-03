@@ -711,7 +711,7 @@
 // <e>SNMP Agent
 // =============
 // <i> Enable or disable SNMP Agent
-#define SNMP_ENABLE    1
+#define SNMP_ENABLE    0
 
 //   <s.15>Community Name
 //   <i> Defines where an SNMP message is destined for.

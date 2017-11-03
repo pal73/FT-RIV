@@ -4,7 +4,7 @@
 //#include "LPC17xx.H"
 #include "main.h"
 #include <string.h>
-
+#include "stark.h"
 #include "eeprom_map.h"
 
 extern int  mem_copy (void *dp, void *sp, int len);
@@ -66,7 +66,65 @@ unsigned char modbus_func;			//встроенный в посылку код функции
 
 
 
-mem_copy(modbus_an_buffer,modbus_rx_buffer,modbus_rx_buffer_ptr);
+mem_copy(modbus_an_buffer,starkBatteryInBuff,starkBatteryInBuffPtr);
+
+modbus_rx_counter=starkBatteryInBuffPtr;
+starkBatteryInBuffPtr=0;
+
+
+if(starkRequestPhase==0)
+	{
+	if(modbus_rx_counter==7)
+		{
+		lakb[0]._tot_bat_volt=(((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4])/10;
+		}
+	}
+	
+else if(starkRequestPhase==1)
+	{
+	if(modbus_rx_counter==7)
+		{
+		lakb[0]._ch_curr=((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4];
+		}
+	}
+
+else if(starkRequestPhase==2)
+	{
+	if(modbus_rx_counter==7)
+		{
+		lakb[0]._s_o_h=((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4];
+		}
+	}
+
+else if(starkRequestPhase==3)
+	{
+	if(modbus_rx_counter==7)
+		{
+		lakb[0]._s_o_c=((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4];
+		}
+	}
+
+else if(starkRequestPhase==4)
+	{
+	if(modbus_rx_counter==17)
+		{
+		lakb[0]._cell_temp_1=		((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4];
+		lakb[0]._cell_temp_2=		((signed short)modbus_an_buffer[5]*256)+(signed short)modbus_an_buffer[6];
+		lakb[0]._cell_temp_3=		((signed short)modbus_an_buffer[7]*256)+(signed short)modbus_an_buffer[8];
+		lakb[0]._cell_temp_4=		((signed short)modbus_an_buffer[9]*256)+(signed short)modbus_an_buffer[10];
+		lakb[0]._cell_temp_ambient=	((signed short)modbus_an_buffer[11]*256)+(signed short)modbus_an_buffer[12];
+		lakb[0]._cell_temp_power=	((signed short)modbus_an_buffer[13]*256)+(signed short)modbus_an_buffer[14];
+		}
+	}
+else if(starkRequestPhase==5)
+	{
+	if(modbus_rx_counter==9)
+		{
+		lakb[0]._flags1=		((signed short)modbus_an_buffer[3]*256)+(signed short)modbus_an_buffer[4];
+		lakb[0]._flags2=		((signed short)modbus_an_buffer[5]*256)+(signed short)modbus_an_buffer[6];
+		}
+	}
+/*
 modbus_rx_counter=modbus_rx_buffer_ptr;
 modbus_rx_buffer_ptr=0;
 bMODBUS_TIMEOUT=0;
@@ -232,53 +290,18 @@ if(crc16_calculated==crc16_incapsulated)
 	     		}
 			if(modbus_rx_arg0==19)		//вкл/выкл источника напр.
 				{
-	/*			if(modbus_rx_arg1==1)
-					{
-					if(work_stat!=wsPS)
-						{
-						work_stat=wsPS;
-						time_proc=0;
-						time_proc_remain=T_PROC_PS;
-						restart_on_PS();
-						lc640_write_int(EE_MAIN_MENU_MODE,mmmIN);
-						}
-					}
-				if(modbus_rx_arg1==0)
-					{
-					if(work_stat==wsPS)
-						{
-						work_stat=wsOFF;
-						restart_off();
-						}
-					} */
+
 				}
 			if(modbus_rx_arg0==20)		//вкл/выкл источника тока
 				{
-/*				if(modbus_rx_arg1==1)
-					{
-					if(work_stat!=wsGS)
-						{
-						work_stat=wsGS;
-						time_proc=0;
-						time_proc_remain=T_PROC_GS;
-						lc640_write_int(EE_MAIN_MENU_MODE,mmmIT);
-						}
-					}
-				if(modbus_rx_arg1==0)
-					{
-					if(work_stat==wsGS)
-						{
-						work_stat=wsOFF;
-						restart_off();
-						}
-					}*/
+
 				}
 			modbus_hold_register_transmit(MODBUS_ADRESS,modbus_func,modbus_rx_arg0);
 			}
 		} 
 	//modbus_plazma++;
 	}
-// modbus_plazma++;
+// modbus_plazma++;*/
 
 }
 

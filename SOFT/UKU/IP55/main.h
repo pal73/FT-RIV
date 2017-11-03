@@ -684,6 +684,9 @@ extern char cnt_of_slave;
 //***********************************************
 //Индикация
 typedef enum {
+	#ifdef UKU_IP55
+	iMn_IP55,
+	#endif
 	#ifdef UKU_220_IPS_TERMOKOMPENSAT
 	iMn_220_IPS_TERMOKOMPENSAT,
 	#endif
@@ -727,15 +730,18 @@ typedef enum {
 	#ifndef UKU_TELECORE2015
 	iMn_TELECORE2015,
 	#endif 
+	#ifndef UKU_IP55
+	iMn_IP55,
+	#endif
 	iSrv_sl,iNet,iNet3,iNetEM,
 	iSet,iSet_3U,iSet_RSTKM,iSet_GLONASS,iSet_KONTUR,iSet_6U,iSet_220,iSet_220_IPS_TERMOKOMPENSAT,iSet_220_V2,iInv_set_sel,
-	iBat,iBat_simple,iBat_li,iBat_SacredSun,iBat_universe,iInv_set,iSet_TELECORE2015,
+	iBat,iBat_simple,iBat_li,iBat_SacredSun,iBat_universe,iInv_set,iSet_IP55,
 	iMakb,
 	iBps,iS2,iSet_prl,iK_prl,iDnd,iDcdc,
-	iK,iK_3U,iK_RSTKM,iK_GLONASS,iK_KONTUR,iK_6U,iK_220,iK_220_380,iK_220_IPS_TERMOKOMPENSAT,iK_220_IPS_TERMOKOMPENSAT_IB,iK_TELECORE,
+	iK,iK_3U,iK_RSTKM,iK_GLONASS,iK_KONTUR,iK_6U,iK_220,iK_220_380,iK_220_IPS_TERMOKOMPENSAT,iK_220_IPS_TERMOKOMPENSAT_IB,iK_IP55,
 	iSpcprl,iSpc,k,Crash_0,Crash_1,iKednd,iAv_view_avt,iAKE,iSpc_termocompensat,
 	iLoad,iSpc_prl_vz,iSpc_prl_ke,iKe,iVz,iAvz,iAVAR,
-	iStr,iStr_3U,iStr_RSTKM,iStr_GLONASS,iStr_KONTUR,iStr_6U,iStr_220_IPS_TERMOKOMPENSAT,iStr_TELECORE2015,
+	iStr,iStr_3U,iStr_RSTKM,iStr_GLONASS,iStr_KONTUR,iStr_6U,iStr_220_IPS_TERMOKOMPENSAT,iStr_IP55,
 	iVrs,iPrltst,iApv,
 	iK_bps,iK_bps_sel,iK_bat,iK_bat_simple,iK_bat_ips_termokompensat_ib,iK_bat_sel,iK_bat_sel_TELECORE,iK_load,iK_net,iK_net3,
 	iK_makb_sel,iK_makb,iK_out,
@@ -767,7 +773,8 @@ typedef enum {
 	iBps_list,
 	iSpch_set,
 	iAvt_set_sel,iAvt_set,
-	iOut_volt_contr,iDop_rele_set,iBlok_ips_set}i_enum;
+	iOut_volt_contr,iDop_rele_set,iBlok_ips_set,
+	iSet_li_bat}i_enum;
 
 typedef struct  
 {
@@ -885,7 +892,7 @@ extern signed short BAT_TYPE;	//Тип батареи. 0 - обычная свинцовая, 1-литиевая C
 extern signed short DU_LI_BAT;	//Параметр, определяющий напряжение содержания литиевой батареи
 extern signed short FORVARDBPSCHHOUR;	//Периодичностьсмены ведущего источника в часах. Если 0 - функция выключена и ведущий первый источник
 extern signed short NUMBAT;
-extern signed short NUMBAT_TELECORE;
+extern signed short NUMBAT_IP55;
 extern signed short NUMIST;
 extern signed short NUMINV;
 extern signed short NUMDT;
@@ -1002,6 +1009,17 @@ extern signed short RELE_VENT_LOGIC;
 extern signed short MODBUS_ADRESS;
 extern signed short MODBUS_BAUDRATE;
 extern signed short BAT_LINK;
+
+extern signed short LI_UNECC;
+extern signed short LI_Q;
+extern signed short LI_IZMAX1;
+extern signed short LI_IZMAX2;
+extern signed short LI_K1;
+extern signed short LI_K2;
+extern signed short LI_K3;
+extern signed short LI_T4;
+extern signed short LI_UNECC_;					//Напряжение содержания мгновенное, с учетом аварий батареи
+
 
 //***********************************************
 //Состояние батарей
@@ -1142,6 +1160,7 @@ typedef struct
 	char 		_plazma[8];		//переменные для отладки
 	signed short 	_isOnCnt;
 	signed short	_s_o_c_abs;		//остаточный заряд в абсолютном выражении
+	signed short 	_s_o_c_percent; //остаточный заряд в процентном выражении
 	signed short	_plazma_ss;
 	signed short	_zar_percent;	//заряд батареи в процетах
 	signed char		_cell_temp_1;	//температура 1-го датчика батареи(ZTT)
@@ -1150,6 +1169,8 @@ typedef struct
 	signed char		_cell_temp_4;	//температура 4-го датчика батареи(ZTT)
 	signed char		_cell_temp_ambient;	//температура датчика окружающей среды батареи(ZTT)
 	signed char		_cell_temp_power;	//температура датчика силовой части батареи(ZTT)
+	signed char 	_voltage_event_code;							//(ZTT)
+
 	} LAKB_STAT; 
 extern LAKB_STAT lakb[3];
 extern char lakb_damp[1][42];
@@ -1493,6 +1514,24 @@ extern signed short speedChrgBlckSrc;		//Источник сигнала блокировки, 0-выкл., 1
 extern signed short speedChrgBlckLog;		//Логика сигнала блокировки, 1 - блокировка по замкнутому СК, 0 - по разомкнутому
 extern signed short speedChrgBlckStat;		//Сигнал блокировки для выравнивающего и ускоренного заряда.
 extern char  		speedChrgShowCnt;		//Счетчик показа информационного сообщения
+
+//-----------------------------------------------
+//Алгоритм содержания батареи 	
+//signed short TELECORE2017_USTART;		//Напряжение включения
+//signed short TELECORE2017_ULINECC;		//Напряжение содержания из установок
+extern signed short LI_UNECC_;					//Напряжение содержания мгновенное, с учетом аварий батареи
+extern signed short LI_AVAR_CNT;				//Счетчик аварийности батареи для снижения напряжения содержания
+
+//signed short TELECORE2017_AVAR_CNT;		//Счетчик аварийности батареи для снижения напряжения содержания
+//signed short TELECORE2017_Q;			//Заряд батари (%) при котором переходим с тока IZMAX1 на IZMAX2
+//signed short TELECORE2017_IZMAX1;		//Максимальный ток заряда батареи при разряженной батарее(заряд < TELECORE2017_Q)
+//signed short TELECORE2017_IZMAX2;	   	//Максимальный ток заряда батареи при заряженной батарее(заряд >= TELECORE2017_Q)
+//signed short TELECORE2017_K1;			//Шаг регулирования(ед/с) при Uвыпр<(Uбат-2В)
+//signed short TELECORE2017_K2;			//Шаг регулирования(ед/с) при Uвыпр>(Uбат-2В) и отсутствии токов батарей
+//signed short TELECORE2017_K3;			//Шаг регулирования(ед/с) при токе батарей в интервале 0-70% от Izmax
+//signed short TELECORE2017_T4;			//Период регулирования(сек) еденичными шагами при токе батарейц в интервале 70-110%от Izmax 
+//#endif 
+
 
 //-----------------------------------------------
 //Блокировка ИПС

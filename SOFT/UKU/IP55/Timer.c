@@ -75,7 +75,7 @@ void TIMER0_IRQHandler (void)
 
 
 	//adc_drv6();
-	adc_self_ch_cnt=0;
+	//adc_self_ch_cnt=0;
 	SET_REG(LPC_ADC->ADCR,1<<2,0,8);
 	LPC_ADC->ADCR |=  (1<<24);
 

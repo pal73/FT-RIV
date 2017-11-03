@@ -1,7 +1,7 @@
 #include "common_func.h"
 #include "ret.h"
 #include "eeprom_map.h"
-#include "25lc640.h"
+//#include "25lc640.h"
 #include "main.h"
 #include <LPC17xx.H>
 
@@ -362,14 +362,14 @@ char iii;
 char dt[4],dt_[4],dt__[4];
 unsigned int tempii;    
 		
-tempii=lc640_read_int(PTR_EVENT_LOG);
+tempii=//////lc640_read_int(PTR_EVENT_LOG);
 tempii=ptr_carry(tempii,64,-1*((signed)num));
 tempii*=32;
 tempii+=EVENT_LOG;
      
-lc640_read_long_ptr(tempii,dt);
-lc640_read_long_ptr(tempii+8,dt_);
-lc640_read_long_ptr(tempii+12,dt__);
+//////lc640_read_long_ptr(tempii,dt);
+//////lc640_read_long_ptr(tempii+8,dt_);
+//////lc640_read_long_ptr(tempii+12,dt__);
 
 iii=find(simbol);
      
@@ -1255,15 +1255,15 @@ char iii;
 char dt[4],dt_[4],dt__[4];
 unsigned int tempii;    
 		
-/*tempii=lc640_read_int(PTR_EVENT_LOG);
+/*tempii=//////lc640_read_int(PTR_EVENT_LOG);
 tempii=ptr_carry(tempii,64,-1*((signed)num));*/
 tempii=(signed)num;
 tempii*=32;
 tempii+=EVENT_LOG;
      
-lc640_read_long_ptr(tempii,dt);
-lc640_read_long_ptr(tempii+8,dt_);
-lc640_read_long_ptr(tempii+12,dt__);
+//////lc640_read_long_ptr(tempii,dt);
+////lc640_read_long_ptr(tempii+8,dt_);
+////lc640_read_long_ptr(tempii+12,dt__);
 
 iii=find(simbol);
 

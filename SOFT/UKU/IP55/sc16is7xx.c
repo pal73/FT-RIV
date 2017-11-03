@@ -3,7 +3,7 @@
 #include <LPC17xx.H>
 #include "main.h"
 #include "modbus.h"
-#include "coslight.h"
+#include "stark.h"
 
 short sc16is700ByteAvailable;
 char sc16is700TxFifoLevel;
@@ -164,70 +164,10 @@ if(sc16is700ByteAvailable) //Если в приемном ФИФО	микросхемы есть данные
 		if(!sc16is700RecieveDisableFlag)
 			{
 			char temp=sc16is700_rd_byte(CS16IS7xx_RHR);
-			coslightBatteryInBuff[coslightBatteryInBuffPtr]=temp; 
-			coslightBatteryInBuffPtr++;
-			if(temp==0x0d)
-				{
-				bCoslightPacketIn++;
+			starkBatteryInBuff[starkBatteryInBuffPtr]=temp; 
+			starkBatteryInBuffPtr++;
 
-				if(coslightBatteryInBuffPtr==298)
-					{
-					bCoslightPacketIn=1;
-					lakb[0]._max_cell_temp=	(
-											((ascii2halFhex(coslightBatteryInBuff[21]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[22])))
-											); 
-					lakb[0]._min_cell_temp=	(
-											((ascii2halFhex(coslightBatteryInBuff[23]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[24])))
-											); 
-					lakb[0]._tot_bat_volt=	(
-											((ascii2halFhex(coslightBatteryInBuff[25]))<<12)+
-											((ascii2halFhex(coslightBatteryInBuff[26]))<<8)+
-											((ascii2halFhex(coslightBatteryInBuff[27]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[28])))
-											)/10; 
-					lakb[0]._ch_curr=		(
-											((ascii2halFhex(coslightBatteryInBuff[29]))<<12)+
-											((ascii2halFhex(coslightBatteryInBuff[30]))<<8)+
-											((ascii2halFhex(coslightBatteryInBuff[31]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[32])))
-											); 
-					lakb[0]._dsch_curr=		(
-											((ascii2halFhex(coslightBatteryInBuff[33]))<<12)+
-											((ascii2halFhex(coslightBatteryInBuff[34]))<<8)+
-											((ascii2halFhex(coslightBatteryInBuff[35]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[36])))
-											);
-					if(lakb[0]._dsch_curr)lakb[0]._ch_curr=-lakb[0]._dsch_curr;	
-					lakb[0]._s_o_c=			(
-											((ascii2halFhex(coslightBatteryInBuff[37]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[38])))
-											); 
-					lakb[0]._rat_cap=		(
-											((ascii2halFhex(coslightBatteryInBuff[39]))<<12)+
-											((ascii2halFhex(coslightBatteryInBuff[40]))<<8)+
-											((ascii2halFhex(coslightBatteryInBuff[41]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[42])))
-											)/10;
-					lakb[0]._r_b_t=			(
-											((ascii2halFhex(coslightBatteryInBuff[43]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[44])))
-											); 											 												
-					lakb[0]._s_o_h=			(
-											((ascii2halFhex(coslightBatteryInBuff[49]))<<4)+
-											((ascii2halFhex(coslightBatteryInBuff[50])))
-											); 																
-										 
-					}
-				if(coslightBatteryInBuffPtr==264)bCoslightPacketIn=2;
-				coslightBatteryInBuffPtr_plazma=coslightBatteryInBuffPtr;
-				coslightBatteryInBuffPtr=0;				
-				break;
-
-				}
-			
-			//liBattery_rx_buffer_cnt=0;   //Запускаем таймер опознавания конца посылки 
+			modbus_timeout_cnt=0;   //Запускаем таймер опознавания конца посылки 
 			}
 		else sc16is700_rd_byte(CS16IS7xx_RHR);
 		}
