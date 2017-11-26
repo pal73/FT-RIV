@@ -1,12 +1,14 @@
 #include "FT_Platform.h"
 #include "riverdi.h"
+#include "LPC17xx.H"
+#include "main.h"
 
 unsigned char SPI_SendByte(unsigned char data);
 
 /* API to initialize the SPI interface */
 ft_bool_t  Ft_Gpu_Hal_Init( void )
 {
-	GPIO_InitTypeDef GPIO_InitStruct;
+/*	GPIO_InitTypeDef GPIO_InitStruct;
 
 	GPIO_StructInit(&GPIO_InitStruct);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
@@ -38,9 +40,9 @@ ft_bool_t  Ft_Gpu_Hal_Init( void )
 
 	GPIO_WriteBit(PD_PORT,PD_PIN,Bit_SET);
 	// Deselect the FT800: Chip Select high
-	GPIO_WriteBit(CS_PORT,CS_PIN,Bit_SET);
+	GPIO_WriteBit(CS_PORT,CS_PIN,Bit_SET); */
 
-	return TRUE;
+	//return TRUE;
 }
 
 //#ifdef FT_81X_ENABLE
@@ -63,7 +65,7 @@ ft_void_t Ft_Gpu_81X_SelectSysCLK(Ft_Gpu_Hal_Context_t *host, FT_GPU_81X_PLL_FRE
 
 ft_void_t Ft_Gpu_HostCommand_Ext3(Ft_Gpu_Hal_Context_t *host,ft_uint32_t cmd)
 {
-	#ifdef FT900_PLATFORM
+/*	#ifdef FT900_PLATFORM
 		ft_uint8_t hcmd[4] = {0};
 		hcmd[0] = cmd & 0xff;
 		hcmd[1] = (cmd>>8) & 0xff;
@@ -98,9 +100,10 @@ ft_void_t Ft_Gpu_HostCommand_Ext3(Ft_Gpu_Hal_Context_t *host,ft_uint32_t cmd)
 	  SPI_SendByte(cmd);
 	  SPI_SendByte((cmd>>8) & 0xff);
 	  SPI_SendByte((cmd>>16) & 0xff);
-	  GPIO_WriteBit(CS_PORT, CS_PIN, 1);
+	  GPIO_WriteBit(CS_PORT, CS_PIN, 1);  */
 }
 
+#ifdef NOTPAVLIK
 ft_bool_t    Ft_Gpu_Hal_Open( void )
 {
 
@@ -172,6 +175,8 @@ ft_bool_t    Ft_Gpu_Hal_Open( void )
 
 	return TRUE;
 }
+#endif
+
 ft_void_t  Ft_Gpu_Hal_Close(Ft_Gpu_Hal_Context_t *host)
 {
 	host->status = FT_GPU_HAL_CLOSED;
@@ -205,73 +210,14 @@ ft_void_t  Ft_Gpu_Hal_StartTransfer(Ft_Gpu_Hal_Context_t *host,FT_GPU_TRANSFERDI
 {
 	if (FT_GPU_READ == rw){
 
-#ifdef MSVC_PLATFORM_SPI
-		ft_uint8_t Transfer_Array[4];
-		ft_uint32_t SizeTransfered;
-
-		/* Compose the read packet */
-		Transfer_Array[0] = addr >> 16;
-		Transfer_Array[1] = addr >> 8;
-		Transfer_Array[2] = addr;
-
-		Transfer_Array[3] = 0; //Dummy Read byte
-		SPI_Write((FT_HANDLE)host->hal_handle,Transfer_Array,sizeof(Transfer_Array),&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES | SPI_TRANSFER_OPTIONS_CHIPSELECT_ENABLE);
-#endif
-#ifdef ARDUINO_PLATFORM_SPI
-		digitalWrite(FT_ARDUINO_PRO_SPI_CS, LOW);
-		SPI.transfer(addr >> 16);
-		SPI.transfer(highByte(addr));
-		SPI.transfer(lowByte(addr));
-
-		SPI.transfer(0); //Dummy Read Byte
-#endif
-#if defined (STM32F4XX) || defined (STM32F031C6)
-		GPIO_WriteBit(CS_PORT, CS_PIN, 0);
-
-
-			SPI_SendByte((addr >> 16));
-			SPI_SendByte((addr & 0xFF00) >> 8);
-			SPI_SendByte((addr & 0xFF));
-
-			SPI_SendByte(DUMMY_BYTE);
-
-#endif
-
-	
 		RIV_CS_ON
 		spi1((char)((addr>>16)&0x3f));
 		spi1((char)((addr>>8)&0xff));
 		spi1((char)((addr)&0xff));
 		spi1((char)(0x55));
 
-
 		host->status = FT_GPU_HAL_READING;
 	}else{
-#ifdef MSVC_PLATFORM_SPI
-		ft_uint8_t Transfer_Array[3];
-		ft_uint32_t SizeTransfered;
-
-		/* Compose the read packet */
-		Transfer_Array[0] = (0x80 | (addr >> 16));
-		Transfer_Array[1] = addr >> 8;
-		Transfer_Array[2] = addr;
-		SPI_Write((FT_HANDLE)host->hal_handle,Transfer_Array,3,&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES | SPI_TRANSFER_OPTIONS_CHIPSELECT_ENABLE);
-#endif
-#ifdef ARDUINO_PLATFORM_SPI
-		digitalWrite(FT_ARDUINO_PRO_SPI_CS, LOW);
-		SPI.transfer(0x80 | (addr >> 16));
-		SPI.transfer(highByte(addr));
-		SPI.transfer(lowByte(addr));
-#endif
-
-#if defined (STM32F4XX) || defined (STM32F031C6)
-		GPIO_WriteBit(CS_PORT, CS_PIN, 0);
-
-SPI_SendByte((addr >> 16) & 0xBF | 0x80);
-				//SPI_SendByte((addr >> 16));
-				SPI_SendByte((addr & 0xFF00) >> 8);
-				SPI_SendByte((addr & 0xFF));
-#endif
 
 		RIV_CS_ON
 		spi1((char)(((addr>>16)&0x3f)|0x80));
@@ -304,24 +250,7 @@ ft_uint8_t    Ft_Gpu_Hal_TransferString(Ft_Gpu_Hal_Context_t *host,const ft_char
 
 ft_uint8_t    Ft_Gpu_Hal_Transfer8(Ft_Gpu_Hal_Context_t *host,ft_uint8_t value)
 {
-#ifdef ARDUINO_PLATFORM_SPI
-        return SPI.transfer(value);
-#endif
-#ifdef MSVC_PLATFORM_SPI
-	ft_uint32_t SizeTransfered;
-	if (host->status == FT_GPU_HAL_WRITING){
-		SPI_Write(host->hal_handle,&value,sizeof(value),&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES);
-	}else{
-		SPI_Read(host->hal_handle,&value,sizeof(value),&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES);
-	}
-
-	if (SizeTransfered != sizeof(value))
-		host->status = FT_GPU_HAL_STATUS_ERROR;
-        return value;
-#endif
-#if defined (STM32F4XX) || defined (STM32F031C6)
-        return SPI_SendByte(value);
-#endif
+return spi1(value);
 }
 
 
@@ -365,6 +294,7 @@ ft_void_t   Ft_Gpu_Hal_EndTransfer(Ft_Gpu_Hal_Context_t *host)
 	GPIO_WriteBit(CS_PORT, CS_PIN, 1);
 #endif
 
+	RIV_CS_OFF
 	host->status = FT_GPU_HAL_OPENED;
 }
 
@@ -383,6 +313,7 @@ ft_uint16_t Ft_Gpu_Hal_Rd16(Ft_Gpu_Hal_Context_t *host,ft_uint32_t addr)
 	Ft_Gpu_Hal_StartTransfer(host,FT_GPU_READ,addr);
 	value = Ft_Gpu_Hal_Transfer16(host,0);
 	Ft_Gpu_Hal_EndTransfer(host);
+	RIV_CS_OFF
 	return value;
 }
 ft_uint32_t Ft_Gpu_Hal_Rd32(Ft_Gpu_Hal_Context_t *host,ft_uint32_t addr)
@@ -413,6 +344,7 @@ ft_void_t Ft_Gpu_Hal_Wr32(Ft_Gpu_Hal_Context_t *host,ft_uint32_t addr, ft_uint32
 	Ft_Gpu_Hal_EndTransfer(host);
 }
 
+#ifdef NOTPAVLIK
 ft_void_t Ft_Gpu_HostCommand(ft_uint8_t cmd)
 {
 
@@ -426,7 +358,7 @@ ft_void_t Ft_Gpu_HostCommand(ft_uint8_t cmd)
 
 
 }
-
+#endif
 ft_void_t Ft_Gpu_Hal_Updatecmdfifo(Ft_Gpu_Hal_Context_t *host,ft_uint16_t count)
 {
 	host->ft_cmd_fifo_wp  = (host->ft_cmd_fifo_wp + count) & 4095;
@@ -436,31 +368,41 @@ ft_void_t Ft_Gpu_Hal_Updatecmdfifo(Ft_Gpu_Hal_Context_t *host,ft_uint16_t count)
 	Ft_Gpu_Hal_Wr16(host,REG_CMD_WRITE,host->ft_cmd_fifo_wp);
 }
 
-
 ft_uint16_t Ft_Gpu_Cmdfifo_Freespace(Ft_Gpu_Hal_Context_t *host)
 {
 	ft_uint16_t fullness,retval;
+	
+	fullness = (host->ft_cmd_fifo_wp - Ft_Gpu_Hal_Rd16(host,REG_CMD_READ)) & 4095;
+	retval = (FT_CMD_FIFO_SIZE - 4) - fullness;
+	return (retval);
+}
+/*
+ft_uint16_t Ft_Gpu_Cmdfifo_Freespace_(Ft_Gpu_Hal_Context_t *host)
+{
+	ft_uint16_t fullness,retval;
+	ft_plazma= Ft_Gpu_Hal_Rd16(host,REG_CMD_READ);
 
 	fullness = (host->ft_cmd_fifo_wp - Ft_Gpu_Hal_Rd16(host,REG_CMD_READ)) & 4095;
 	retval = (FT_CMD_FIFO_SIZE - 4) - fullness;
 	return (retval);
 }
-
+*/
 ft_void_t Ft_Gpu_Hal_WrCmdBuf(Ft_Gpu_Hal_Context_t *host,ft_uint8_t *buffer,ft_uint16_t count)
 {
 	ft_uint32_t length =0, SizeTransfered = 0;   
-
+/*
 #define MAX_CMD_FIFO_TRANSFER   Ft_Gpu_Cmdfifo_Freespace(host)  
 	do {                
-		length = count;
+		
 		if (length > MAX_CMD_FIFO_TRANSFER){
 		    length = MAX_CMD_FIFO_TRANSFER;
-		}
-      	        Ft_Gpu_Hal_CheckCmdBuffer(host,length);
+		}*/		
+		length = count;
+      	Ft_Gpu_Hal_CheckCmdBuffer(host,length);
 
-                Ft_Gpu_Hal_StartCmdTransfer(host,FT_GPU_WRITE,length);
-
-#if defined(ARDUINO_PLATFORM_SPI) || defined(STM32F4XX) || defined(STM32F031C6)
+        Ft_Gpu_Hal_StartCmdTransfer(host,FT_GPU_WRITE,length);
+/*
+#if defined(ARDUINO_PLATFORM_SPI) || defined(STM32F4XX) || defined(STM32F031C6)	 */
                 SizeTransfered = 0;
 		while (length--) {
                     Ft_Gpu_Hal_Transfer8(host,*buffer);
@@ -468,7 +410,7 @@ ft_void_t Ft_Gpu_Hal_WrCmdBuf(Ft_Gpu_Hal_Context_t *host,ft_uint8_t *buffer,ft_u
                     SizeTransfered ++;
 		}
                 length = SizeTransfered;
-#endif
+/*#endif
 
 #ifdef MSVC_PLATFORM_SPI
 		{
@@ -476,15 +418,15 @@ ft_void_t Ft_Gpu_Hal_WrCmdBuf(Ft_Gpu_Hal_Context_t *host,ft_uint8_t *buffer,ft_u
                     length = SizeTransfered;
    		    buffer += SizeTransfered;
 		}
-#endif
+#endif */
 
 		Ft_Gpu_Hal_EndTransfer(host);
 		Ft_Gpu_Hal_Updatecmdfifo(host,length);
 
 		Ft_Gpu_Hal_WaitCmdfifo_empty(host);
 
-		count -= length;
-	}while (count > 0);
+/*		count -= length;
+	}while (count > 0);*/
 }
 
 //#ifdef ARDUINO_PLATFORM_SPI
@@ -531,6 +473,16 @@ ft_void_t Ft_Gpu_Hal_CheckCmdBuffer(Ft_Gpu_Hal_Context_t *host,ft_uint16_t count
         getfreespace = Ft_Gpu_Cmdfifo_Freespace(host);
    }while(getfreespace < count);
 }
+
+/*
+ft_void_t Ft_Gpu_Hal_CheckCmdBuffer_(Ft_Gpu_Hal_Context_t *host,ft_uint16_t count)
+{
+   ft_uint16_t getfreespace;
+   do{
+        getfreespace = Ft_Gpu_Cmdfifo_Freespace_(host);
+   }while(getfreespace < count);
+}*/
+
 ft_void_t Ft_Gpu_Hal_WaitCmdfifo_empty(Ft_Gpu_Hal_Context_t *host)
 {
    while(Ft_Gpu_Hal_Rd16(host,REG_CMD_READ) != Ft_Gpu_Hal_Rd16(host,REG_CMD_WRITE));
@@ -570,6 +522,7 @@ ft_void_t Ft_Gpu_Hal_ResetDLBuffer(Ft_Gpu_Hal_Context_t *host)
 {
            host->ft_dl_buff_wp = 0;
 }
+#ifdef NOTPAVLIK
 /* Toggle PD_N pin of FT800 board for a power cycle*/
 ft_void_t Ft_Gpu_Hal_Powercycle(ft_bool_t up)
 {
@@ -592,6 +545,8 @@ ft_void_t Ft_Gpu_Hal_Powercycle(ft_bool_t up)
 
 	}
 }
+#endif
+
 ft_void_t Ft_Gpu_Hal_WrMemFromFlash(Ft_Gpu_Hal_Context_t *host,ft_uint32_t addr,const ft_prog_uchar8_t *buffer, ft_uint32_t length)
 {
 	ft_uint32_t SizeTransfered = 0;      
@@ -751,6 +706,7 @@ unsigned char SPI_SendByte(unsigned char data)
 }
 #endif
 
+#ifdef NOTPAVLIK
 void delay(uint32_t ms)
 {
 #ifdef STM32F4XX
@@ -776,3 +732,4 @@ void delay(uint32_t ms)
        }
 #endif
 }
+#endif

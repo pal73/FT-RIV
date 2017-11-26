@@ -1339,6 +1339,7 @@ extern short plazma_numOfTemperCells;
 extern short plazma_numOfPacks;
 
 extern char plazma_ztt[2];
+extern short ft_plazma;
 
 /*----------------------------------------------------------------------------
  * end of file
