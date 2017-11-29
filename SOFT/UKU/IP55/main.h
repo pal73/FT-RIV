@@ -1340,7 +1340,8 @@ extern short plazma_numOfPacks;
 
 extern char plazma_ztt[2];
 extern short ft_plazma;
-
+//extern FT_PROGMEM ft_prog_uchar8_t SAMApp_Metric_L1[];
+//extern FT_PROGMEM ft_prog_uchar8_t SAMApp_L1[];
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/

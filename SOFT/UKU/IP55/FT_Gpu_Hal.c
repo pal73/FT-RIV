@@ -1,3 +1,4 @@
+#include "FT_DataTypes.h"
 #include "FT_Platform.h"
 #include "riverdi.h"
 #include "LPC17xx.H"
@@ -553,19 +554,10 @@ ft_void_t Ft_Gpu_Hal_WrMemFromFlash(Ft_Gpu_Hal_Context_t *host,ft_uint32_t addr,
 
 	Ft_Gpu_Hal_StartTransfer(host,FT_GPU_WRITE,addr);
 
-#if defined(ARDUINO_PLATFORM) ||  defined (STM32F4XX) || defined (STM32F031C6)
 	while (length--) {
             Ft_Gpu_Hal_Transfer8(host,ft_pgm_read_byte_near(buffer));
 	    buffer++;
 	}
-#endif
-
-#ifdef MSVC_PLATFORM_SPI
-	{
-	    SPI_Write((FT_HANDLE)host->hal_handle,buffer,length,&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES);
-	}
-#endif
-
 
 	Ft_Gpu_Hal_EndTransfer(host);
 }

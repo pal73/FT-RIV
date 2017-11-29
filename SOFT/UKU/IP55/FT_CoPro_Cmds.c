@@ -466,11 +466,14 @@ ft_void_t Ft_Gpu_CoCmd_Calibrate(Ft_Gpu_Hal_Context_t *phost,ft_uint32_t result)
 }
 ft_void_t Ft_Gpu_CoCmd_SetFont(Ft_Gpu_Hal_Context_t *phost,ft_uint32_t font, ft_uint32_t ptr)
 {
-  Ft_Gpu_CoCmd_StartFunc(phost,FT_CMD_SIZE*3);       
-  Ft_Gpu_Copro_SendCmd(phost, CMD_SETFONT);
-  Ft_Gpu_Copro_SendCmd(phost, font);
-  Ft_Gpu_Copro_SendCmd(phost, ptr);
-  Ft_Gpu_CoCmd_EndFunc(phost,(FT_CMD_SIZE*3));       
+  //Ft_Gpu_CoCmd_StartFunc(phost,FT_CMD_SIZE*3);       
+  //Ft_Gpu_Copro_SendCmd(phost, CMD_SETFONT);
+  Ft_Gpu_Hal_WrCmd32(phost, CMD_SETFONT);
+  //Ft_Gpu_Copro_SendCmd(phost, font);
+  Ft_Gpu_Hal_WrCmd32(phost, font);
+  //Ft_Gpu_Copro_SendCmd(phost, ptr);
+  Ft_Gpu_Hal_WrCmd32(phost, ptr);
+  //Ft_Gpu_CoCmd_EndFunc(phost,(FT_CMD_SIZE*3));       
 }
 ft_void_t Ft_Gpu_CoCmd_Logo(Ft_Gpu_Hal_Context_t *phost)
 {

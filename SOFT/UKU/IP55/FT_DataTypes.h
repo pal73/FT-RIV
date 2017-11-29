@@ -190,5 +190,4 @@ typedef unsigned int ft_prog_uint16_t;
 /* Nothing beyond this*/
 
 
-
-
+#define ft_pgm_read_byte_near(x)   (*(x))
