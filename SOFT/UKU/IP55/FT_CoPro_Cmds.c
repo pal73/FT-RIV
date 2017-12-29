@@ -225,10 +225,10 @@ ft_void_t Ft_Gpu_CoCmd_Swap(Ft_Gpu_Hal_Context_t *phost)
 }
 ft_void_t Ft_Gpu_CoCmd_Inflate(Ft_Gpu_Hal_Context_t *phost,ft_uint32_t ptr)
 {
-  Ft_Gpu_CoCmd_StartFunc(phost,FT_CMD_SIZE*2);
+  //Ft_Gpu_CoCmd_StartFunc(phost,FT_CMD_SIZE*2);
   Ft_Gpu_Copro_SendCmd(phost, CMD_INFLATE);
   Ft_Gpu_Copro_SendCmd(phost, ptr);
-  Ft_Gpu_CoCmd_EndFunc(phost,(FT_CMD_SIZE*2));  
+  //Ft_Gpu_CoCmd_EndFunc(phost,(FT_CMD_SIZE*2));  
 }
 ft_void_t Ft_Gpu_CoCmd_Translate(Ft_Gpu_Hal_Context_t *phost,ft_int32_t tx, ft_int32_t ty)
 {

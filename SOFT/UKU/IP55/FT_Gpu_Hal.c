@@ -390,44 +390,36 @@ ft_uint16_t Ft_Gpu_Cmdfifo_Freespace_(Ft_Gpu_Hal_Context_t *host)
 */
 ft_void_t Ft_Gpu_Hal_WrCmdBuf(Ft_Gpu_Hal_Context_t *host,ft_uint8_t *buffer,ft_uint16_t count)
 {
-	ft_uint32_t length =0, SizeTransfered = 0;   
-/*
+ft_uint32_t length =0, SizeTransfered = 0;   
+
 #define MAX_CMD_FIFO_TRANSFER   Ft_Gpu_Cmdfifo_Freespace(host)  
-	do {                
-		
-		if (length > MAX_CMD_FIFO_TRANSFER){
-		    length = MAX_CMD_FIFO_TRANSFER;
-		}*/		
-		length = count;
-      	Ft_Gpu_Hal_CheckCmdBuffer(host,length);
-
-        Ft_Gpu_Hal_StartCmdTransfer(host,FT_GPU_WRITE,length);
-/*
-#if defined(ARDUINO_PLATFORM_SPI) || defined(STM32F4XX) || defined(STM32F031C6)	 */
-                SizeTransfered = 0;
-		while (length--) {
-                    Ft_Gpu_Hal_Transfer8(host,*buffer);
-		    buffer++;
-                    SizeTransfered ++;
-		}
-                length = SizeTransfered;
-/*#endif
-
-#ifdef MSVC_PLATFORM_SPI
+do {
+	length = count;                
+	if (length > MAX_CMD_FIFO_TRANSFER)
 		{
-		    SPI_Write(host->hal_handle,buffer,length,&SizeTransfered,SPI_TRANSFER_OPTIONS_SIZE_IN_BYTES);
-                    length = SizeTransfered;
-   		    buffer += SizeTransfered;
+		length = MAX_CMD_FIFO_TRANSFER;
+		}		
+	
+    Ft_Gpu_Hal_CheckCmdBuffer(host,length);
+
+    Ft_Gpu_Hal_StartCmdTransfer(host,FT_GPU_WRITE,length);
+
+    SizeTransfered = 0;
+	while (length--) 
+		{
+        Ft_Gpu_Hal_Transfer8(host,*buffer);
+		buffer++;
+        SizeTransfered ++;
 		}
-#endif */
+   	length = SizeTransfered;
 
-		Ft_Gpu_Hal_EndTransfer(host);
-		Ft_Gpu_Hal_Updatecmdfifo(host,length);
+	Ft_Gpu_Hal_EndTransfer(host);
+	Ft_Gpu_Hal_Updatecmdfifo(host,length);
 
-		Ft_Gpu_Hal_WaitCmdfifo_empty(host);
-
-/*		count -= length;
-	}while (count > 0);*/
+	Ft_Gpu_Hal_WaitCmdfifo_empty(host);
+	count -= length;
+	}
+while (count > 0);
 }
 
 //#ifdef ARDUINO_PLATFORM_SPI
