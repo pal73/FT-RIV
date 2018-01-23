@@ -774,7 +774,7 @@ typedef enum {
 	iSpch_set,
 	iAvt_set_sel,iAvt_set,
 	iOut_volt_contr,iDop_rele_set,iBlok_ips_set,
-	iSet_li_bat}i_enum;
+	iInputs}i_enum;
 
 typedef struct  
 {

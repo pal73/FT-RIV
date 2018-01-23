@@ -2046,7 +2046,7 @@ ft_void_t font_9564_init()
 	Ft_Gpu_Hal_WrCmd32(phost,BITMAP_SIZE_H(0, 0));
 	Ft_Gpu_CoCmd_SetFont(phost,1, 0);
 
-	Ft_Gpu_Hal_WrCmd32(phost, CMD_INFLATE);
+/*	Ft_Gpu_Hal_WrCmd32(phost, CMD_INFLATE);
 	Ft_Gpu_Hal_WrCmd32(phost,RAM_FONTS_TIMES);
 	Ft_Gpu_Hal_WrCmdBuf(phost,fonts_times, sizeof(fonts_times));
 	Ft_Gpu_Hal_WrCmd32(phost,BITMAP_HANDLE(1));
@@ -2059,7 +2059,7 @@ ft_void_t font_9564_init()
 	//Ft_Gpu_Hal_WrCmd32(phost,CLEAR(1, 1, 1));
 	//Ft_Gpu_CoCmd_Text(phost,8, 194, 1, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
 //	Ft_Gpu_CoCmd_Text(phost,8, 224, 1, 0, "ABCD \x7F`{}");
-	
+	*/
 
     Ft_Gpu_Hal_WrCmd32(phost, DISPLAY());
     Ft_Gpu_CoCmd_Swap(phost);
@@ -2494,7 +2494,9 @@ static char sub_cnt,sub_cnt1;
 char i,sub_cnt_max;
 char ii_;				  
 static char ii_cnt,cnt_ind_bat;
+static short touch;
 
+touch=rd32(REG_TOUCH_TAG);
 
 	   
 sub_cnt_max=5;
@@ -2752,7 +2754,7 @@ if(ind==iMn_IP55)
 	//Ft_Gpu_CoCmd_Text(phost,8, 194, 1, 0, "ABC");
 	Ft_Gpu_CoCmd_Text(phost,8, 194, 1, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
 	Ft_Gpu_CoCmd_Text(phost,8, 224, 1, 0, "ABC \x7F`{}");
-	Ft_Gpu_CoCmd_Text(phost,8, 300, 2, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
+	//Ft_Gpu_CoCmd_Text(phost,8, 300, 2, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
 
 
     //Ft_App_WrCoCmd_Buffer(phost, DISPLAY());
@@ -2763,6 +2765,346 @@ if(ind==iMn_IP55)
 	}
 
 
+else if(ind==iMn)
+	{
+	short x_offset,y_offset,x_len, y_len, input1_avar, input2_avar;
+
+	x_offset=0;
+	y_offset=0;
+	input1_avar=bFL;
+	input2_avar=!input1_avar;
+
+	Ft_Gpu_CoCmd_Dlstart(phost);
+	Ft_Gpu_Hal_WrCmd32(phost,CLEAR_COLOR_RGB(200, 200, 200));
+	Ft_Gpu_Hal_WrCmd32(phost, CLEAR(1, 1, 1));
+
+	Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+	Ft_Gpu_Hal_WrCmd32(phost,LINE_WIDTH(1 * 16));
+
+	
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((19+x_offset) * 16 , (9+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (40+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((20+x_offset) * 16, (10+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (40+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((259+x_offset) * 16 , (9+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((790+x_offset) * 16, (40+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((260+x_offset) * 16, (10+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((790+x_offset) * 16, (40+y_offset) * 16));
+
+
+
+	//квадратик первого ввода
+	x_offset=70;
+	y_offset=80;
+	x_len=120;
+	y_len=70;
+
+ 	Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+	Ft_Gpu_Hal_WrCmd32(phost,LINE_WIDTH(1 * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,TAG(1));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16 , (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len+1) * 16, (y_offset+y_len+1) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(180, 180, 180));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16, (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len) * 16, (y_offset+y_len) * 16));
+	if(input1_avar==0)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 220, 0));
+	else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+7) * 16, (y_offset+7) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len-7) * 16, (y_offset+y_len-7) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(180, 180, 180));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+12) * 16, (y_offset+12) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len-12) * 16, (y_offset+y_len-12) * 16));
+	if(touch==1)
+		{
+		Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16, (y_offset) * 16));
+		Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len) * 16, (y_offset+y_len) * 16));
+		}
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 100));
+	Ft_Gpu_CoCmd_Text(phost,x_offset+x_len/2, y_offset+y_len/2, 29, OPT_CENTER, "Input1");
+
+	//квадратик второго ввода
+	x_offset=70;
+	y_offset=200;
+	x_len=120;
+	y_len=70;
+	Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+	Ft_Gpu_Hal_WrCmd32(phost,LINE_WIDTH(1 * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,TAG(2));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16 , (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len+1) * 16, (y_offset+y_len+1) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(180, 180, 180));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16, (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len) * 16, (y_offset+y_len) * 16));
+	if(input2_avar==0)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 220, 0));
+	else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+7) * 16, (y_offset+7) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len-7) * 16, (y_offset+y_len-7) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(180, 180, 180));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+12) * 16, (y_offset+12) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len-12) * 16, (y_offset+y_len-12) * 16));
+	if(touch==2)
+		{
+		Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16, (y_offset) * 16));
+		Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len) * 16, (y_offset+y_len) * 16));
+		}
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 100));
+	Ft_Gpu_CoCmd_Text(phost,x_offset+x_len/2, y_offset+y_len/2, 29, OPT_CENTER, "Input1");
+
+	x_offset=340;
+	y_offset=80;
+	x_len=120;
+	y_len=70;
+
+	Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+	Ft_Gpu_Hal_WrCmd32(phost,LINE_WIDTH(1 * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,TAG(3));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16 , (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len+1) * 16, (y_offset+y_len+1) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(150, 150, 150));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset) * 16, (y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+x_len) * 16, (y_offset+y_len) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((x_offset+150) * 16, (y_offset+80) * 16));
+
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 0, 0));
+		//Ft_Gpu_Hal_WrCmd32(phost,POINT_SIZE(10*16));
+		//Ft_Gpu_Hal_WrCmd32(phost,BEGIN(POINTS));
+		//Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F(500 * 16, 300 * 16));
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//Ft_Gpu_CoCmd_FgColor(phost,0x00ff00UL);
+		//Ft_Gpu_CoCmd_BgColor(phost,0xff00ffUL);
+		///Ft_Gpu_CoCmd_Number(phost,150, 20, 31, OPT_RIGHTX | 4, slider_pos);
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(1));
+		//Ft_Gpu_CoCmd_Slider(phost,200,180, 10, 270,0, slider_pos, 100);
+		//Ft_Gpu_CoCmd_Track(phost,200, 180, 10, 270,1);
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(2));
+		//Ft_Gpu_CoCmd_BgColor(phost,0xff00ffUL);
+		//Ft_Gpu_CoCmd_Toggle(phost,400, 100, 50, 28, 0, toggle_pos, "yes" "\xff" "no");
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+		//Ft_Gpu_CoCmd_FgColor(phost,0x007f00UL);
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(3));
+		//if(rd32(REG_TOUCH_TAG)==3)Ft_Gpu_CoCmd_FgColor(phost,0xffff00UL);
+		//Ft_Gpu_CoCmd_Button(phost,550, 50, 200, 150, 25, 0, "Press");
+		//Ft_Gpu_CoCmd_FgColor(phost,0xffffffUL);
+		//Ft_Gpu_CoCmd_BgColor(phost,0x000000UL);
+		////Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(11));
+		//if(rd32(REG_TOUCH_TAG)==11)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 200-(slider_pos*2), 30, OPT_CENTER, "Item1");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(12));
+		//if(rd32(REG_TOUCH_TAG)==12)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 250-(slider_pos*2), 30, OPT_CENTER, "Item2");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(13));
+		//if(rd32(REG_TOUCH_TAG)==13)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 300-(slider_pos*2), 30, OPT_CENTER, "Item3");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(14));
+		//if(rd32(REG_TOUCH_TAG)==14)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 350-(slider_pos*2), 30, OPT_CENTER, "Item4");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(15));
+		//if(rd32(REG_TOUCH_TAG)==15)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 400-(slider_pos*2), 30, OPT_CENTER, "Item5");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(16));
+		//if(rd32(REG_TOUCH_TAG)==16)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 450-(slider_pos*2), 30, OPT_CENTER, "Item6");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(17));
+		//if(rd32(REG_TOUCH_TAG)==17)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 500-(slider_pos*2), 30, OPT_CENTER, "Item7");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(18));
+		//if(rd32(REG_TOUCH_TAG)==18)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 550-(slider_pos*2), 30, OPT_CENTER, "Item8");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(19));
+		//if(rd32(REG_TOUCH_TAG)==19)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 600-(slider_pos*2), 30, OPT_CENTER, "Item9");
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(20));
+		//if(rd32(REG_TOUCH_TAG)==20)Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//else Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 650-(slider_pos*2), 30, OPT_CENTER, "Item10");
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 200));
+		//Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+		//Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F(0 * 16,0 * 16));
+		//Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F(200 * 16,170 * 16));
+		//Ft_Gpu_Hal_WrCmd32(phost,END());
+		//Ft_Gpu_CoCmd_FgColor(phost,0xffffffUL);
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_Text(phost,100, 150, 30, OPT_CENTER, "Main");
+		////Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		////Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+		//Ft_Gpu_CoCmd_FgColor(phost,0x00ff00UL);
+		//Ft_Gpu_CoCmd_BgColor(phost,0xff00ffUL);
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 0));
+		//Ft_Gpu_CoCmd_Number(phost,150, 20, 31, OPT_RIGHTX | 3,'A');
+		//Ft_Gpu_CoCmd_Number(phost,300, 20, 31, OPT_RIGHTX | 3,'А');
+		//Ft_Gpu_Hal_WrCmd32(phost,TAG(5));
+		//Ft_Gpu_CoCmd_Dial(phost,600, 350, 50, 0, dial_pos);
+		//Ft_Gpu_CoCmd_Track(phost,600, 350, 1, 1,5);
+		//Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 255, 0));
+		//Ft_Gpu_CoCmd_Text(phost,300, 300, 30, OPT_CENTER, "Mama");
+		//Ft_Gpu_CoCmd_Text(phost,300, 350, 8, OPT_CENTER, "Mfmf"); // вывод первых трех символов на экран 
+		//Ft_Gpu_CoCmd_Text(phost,300, 200, 7, OPT_CENTER, "\x22\x40\x42"); // вывод первых трех символов на экран
+
+	////Ft_App_WrCoCmd_Buffer(phost,CLEAR(1, 1, 1));
+	////Ft_Gpu_CoCmd_Text(phost,8, 194, 1, 0, "ABC");
+	//Ft_Gpu_CoCmd_Text(phost,8, 194, 1, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
+	//Ft_Gpu_CoCmd_Text(phost,8, 224, 1, 0, "ABC \x7F`{}");
+	////Ft_Gpu_CoCmd_Text(phost,8, 300, 2, 0, "ABC \x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0B\x0C\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F");
+
+
+    ////Ft_App_WrCoCmd_Buffer(phost, DISPLAY());
+
+	Ft_Gpu_Hal_WrCmd32(phost, DISPLAY());
+	Ft_Gpu_CoCmd_Swap(phost);
+	
+	if((touch==1)||(touch==2)) ind=iInputs; 
+	 
+	}
+
+else if(ind==iInputs)
+	{
+	short x_offset,y_offset;
+
+	x_offset=0;
+	y_offset=0;
+
+	Ft_Gpu_CoCmd_Dlstart(phost);
+	Ft_Gpu_Hal_WrCmd32(phost,CLEAR_COLOR_RGB(200, 200, 200));
+	Ft_Gpu_Hal_WrCmd32(phost, CLEAR(1, 1, 1));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(10, 10, 10));
+	Ft_Gpu_CoCmd_Text(phost, 200,50, 29, OPT_CENTER, "INPUT1");
+	Ft_Gpu_CoCmd_Text(phost, 350,50, 29, OPT_CENTER, "INPUT2");
+
+	Ft_Gpu_Hal_WrCmd32(phost,BEGIN(RECTS));
+	Ft_Gpu_Hal_WrCmd32(phost,LINE_WIDTH(1 * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16 , (99+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (130+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (100+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (130+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (99+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (130+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (100+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (130+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (139+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (170+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (140+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (170+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (139+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (170+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (140+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (170+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (179+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (210+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (180+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (210+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (179+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (210+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (180+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (210+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (219+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (250+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (220+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (250+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (219+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (250+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (220+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (250+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (259+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (290+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (260+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (290+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (259+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (290+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (260+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (290+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (299+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (330+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (300+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (330+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (299+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (330+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (300+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (330+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+   	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((149+x_offset) * 16, (339+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (370+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((150+x_offset) * 16, (340+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((250+x_offset) * 16, (370+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((299+x_offset) * 16, (339+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (370+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(255, 255, 255));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((300+x_offset) * 16, (340+y_offset) * 16));
+	Ft_Gpu_Hal_WrCmd32(phost,VERTEX2F((400+x_offset) * 16, (370+y_offset) * 16));
+
+	Ft_Gpu_Hal_WrCmd32(phost,TAG(1));
+	Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0, 0, 0));
+	Ft_Gpu_CoCmd_FgColor(phost,0x646464UL);
+	Ft_Gpu_Hal_WrCmd32(phost,TAG(3));
+	if(rd32(REG_TOUCH_TAG)==3)Ft_Gpu_CoCmd_FgColor(phost,0xffff00UL);
+	Ft_Gpu_CoCmd_Button(phost, 650, 400, 100, 50, 1, 0, "Press");
+
+	Ft_Gpu_Hal_WrCmd32(phost, DISPLAY());
+	Ft_Gpu_CoCmd_Swap(phost); 
+
+	if(touch==3) ind=iMn;
+	 
+	}
 /*
 const char sm7[]	={" Источник N2        "}; //
 const char sm8[]	={" Нагрузка           "}; //
@@ -2803,6 +3145,7 @@ int2lcdyx(retcnt,0,11,0);
 int2lcdyx(retcntsec,0,7,0);	*/
 //int2lcdyx(bps[0]._vol_i,0,15,0);
 //int2lcdyx(AUSW_MAIN,0,19,0); 
+touch=0;
 }							    
 
 
@@ -3650,10 +3993,22 @@ wr8(REG_PCLK,5);
 font_9564_init();
 
 
-
-
+//Калибровка тачскрина
+Ft_Gpu_CoCmd_Dlstart(phost);
+Ft_Gpu_Hal_WrCmd32(phost,CLEAR_COLOR_RGB(200,200,200));
+Ft_Gpu_Hal_WrCmd32(phost,CLEAR(1,1,1));
+Ft_Gpu_Hal_WrCmd32(phost,COLOR_RGB(0xff,0xff,0xff));
+Ft_Gpu_CoCmd_FgColor(phost,0xff0000UL);
+Ft_Gpu_CoCmd_BgColor(phost,0x0000ffUL);
+Ft_Gpu_CoCmd_Text(phost,100, 100, 27, OPT_CENTER, "Please Tap on the dot");
+Ft_Gpu_CoCmd_Calibrate(phost,0);
+Ft_Gpu_Hal_WrCmd32(phost, DISPLAY());
+Ft_Gpu_CoCmd_Swap(phost); 
 
 ind=iMn_IP55;
+
+ind=iInputs;
+ind=iMn;
 
 delay_ms(300);
 //wr8(0xc0000,0x53);		
